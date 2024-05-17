@@ -1,0 +1,63 @@
+EJERCICIO1
+
+realizamos una copia del estado actual (foto1)
+
+Restauramos la copia de seguridad inicial (foto2)
+
+Editamos el guión "uml_run_my_uml.sh" para que solamente se ejecuten las máquinas indicadas (foto3)
+
+Lanzamos las maquinas virtuales (foto4)
+
+iniciamos sesion con usuario: "root", contraseña: "You can change me." (foto5)
+
+ahora instalamos snort desde exta "sudo apt-get install snort" (foto6)
+
+comprobaos que se ha instalado correctamente "snort -V"
+
+Por ultimo lo configuramos (foto7, foto8, foto9)
+
+
+
+
+EJERCICIO 2
+
+abrir la maquina virtual exta y esperar a que te pida login
+
+el usuario es "root" y la contraseña es "You can change me."
+
+accedemos al fichero snort.conf para hacer los cambios correspondientes "sudo nano /etc/snort/snort.conf" (foto10)
+
+Fijamos la red interna y externa: (foto11)
+Sustituye su linea por "ipvar HOME_NET [10.5.2.0/24,10.5.1.0/24]"
+Sustituye su linea por "ipvar EXTERNAL_NET !$HOME_NET" (Esto define la red externa como cualquier cosa que no sea tu red interna.)
+
+Indico en el fichero de configuración que se envíen las alertas a ¨syslog¨: 
+busco la Sección de Salida Output de Alertas. "output alert_syslog: LOG_AUTH LOG_ALERT"
+
+guardar los cambios "Ctrl + O"
+
+salir del editor "Ctrl + X"
+
+reiniciar snort para que los cambios hagan efecto "sudo systemctl restart snort"
+
+
+
+
+EJERCICIO 3
+
+lanzamos snort con la configuracion del fichero snort.config "snort -c /etc/snort/snort.conf" (foto12)
+
+En otro terminal de exta monitorizamos el fichero de alertas auth.log "tail -f /var/log/auth.log" (foto13)
+
+cambiamos la linea a: "alert tcp any any -> any any (msg:"Escaneo ping con nmap"; flags:S; sid:111111;)"
+cambiamos la linea a: "alert tcp $EXTERNAL_NET any -> $HOME_NET 22 (msg:"SSH TRAFFIC"; flags:S; sid:10000;)"
+
+ctrl + o para guardar
+
+ctrl + x para salir del editor
+
+reiniciamos snort "sudo systemctl restart snort"
+
+en extf realizamos un escaneo de puertos de extf a exta "nmap exta" (foto14)
+
+en exta acceder a las alertas al ejecutar el barrido de puertos y un intento de coexion por ssh "sudo tail -f /var/log/syslog" (foto15)
